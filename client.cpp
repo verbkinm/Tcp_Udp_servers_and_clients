@@ -15,17 +15,15 @@ Client::Client(client_type type, QWidget *parent) :
     if(type == TCP)
         m_socket = new QTcpSocket;
 
-//    m_socketType = type;
-
     connect(m_socket, SIGNAL(connected()), this, SLOT(slotNewConnection()));
 }
 
 Client::~Client()
 {
-    delete ui;
-
     m_socket->close();
     delete m_socket;
+
+    delete ui;
 }
 
 void Client::hexDump(QAbstractSocket *socket)
@@ -45,17 +43,22 @@ void Client::hexDump(QAbstractSocket *socket)
 
 void Client::slotNewConnection()
 {
-    ui->data_textEdit_receive->append("Connected to " + m_socket->peerAddress().toString() + ":" + QString::number(m_socket->peerPort()) );
-
     connect(m_socket, SIGNAL(readyRead()), this, SLOT(slotReadData()));
     connect(m_socket, SIGNAL(disconnected()), this, SLOT(slotSocketDisconnect()));
+
+    ui->data_textEdit_receive->append("Connected to " + m_socket->peerAddress().toString() + ":" + QString::number(m_socket->peerPort()) );
+    ui->status_Change->setIcon(QIcon(":/stop"));
+    ui->status_line_edit->setText("Connected");
 }
 
 void Client::slotSocketDisconnect()
 {
-    ui->data_textEdit_receive->append("Disconnected " + m_socket->peerAddress().toString() + ":" + QString::number(m_socket->peerPort()) );
     disconnect(m_socket, SIGNAL(readyRead()), this, SLOT(slotReadData()));
     disconnect(m_socket, SIGNAL(disconnected()), this, SLOT(slotSocketDisconnect()));
+
+    ui->data_textEdit_receive->append("Disconnected " + m_socket->peerAddress().toString() + ":" + QString::number(m_socket->peerPort()) );
+    ui->status_Change->setIcon(QIcon(":/play"));
+    ui->status_line_edit->setText("Disconnected");
 }
 
 void Client::slotReadData()
@@ -67,7 +70,11 @@ void Client::slotReadData()
                                       " send:");
 
     if(ui->radioButton_ascii_receive->isChecked())
-        ui->data_textEdit_receive->append(m_socket->readAll());
+        ui->data_textEdit_receive->append(QString(m_socket->readAll()).toLocal8Bit());
+    else if(ui->radioButton_latin1_receive->isChecked())
+        ui->data_textEdit_receive->append(QString(m_socket->readAll()).toLatin1());
+    else if(ui->radioButton_UTF8_receive->isChecked())
+        ui->data_textEdit_receive->append(QString(m_socket->readAll()).toUtf8());
     else if(ui->radioButton_hex_receive->isChecked())
         hexDump(m_socket);
 
@@ -79,23 +86,25 @@ void Client::on_actionStatusChange_triggered()
 {
     if(m_socket->state() == QAbstractSocket::UnconnectedState){
         m_socket->connectToHost(ui->ipaddr_line_edit->text(), quint16(ui->port->value()), QIODevice::ReadWrite, QAbstractSocket::IPv4Protocol);
-        ui->status_Change->setIcon(QIcon(":/stop"));
-        ui->status_line_edit->setText("Connected");
     }
     else
     {
         m_socket->close();
-        ui->status_Change->setIcon(QIcon(":/play"));
-        ui->status_line_edit->setText("Disconnected");
     }
 }
 
 void Client::on_actionSendData_triggered()
 {
+    QString endl = "";
+    if(ui->radioButton_rn->isChecked())
+        endl = "\r\n";
+    else if(ui->radioButton_n->isChecked())
+        endl = "n";
+
     if(ui->radioButton_ascii_send->isChecked())
-        m_socket->write(ui->data_textEdit_send->toPlainText().toLocal8Bit());
+        m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toLocal8Bit());
     else if(ui->radioButton_latin1_send->isChecked())
-        m_socket->write(ui->data_textEdit_send->toPlainText().toLatin1());
+        m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toLatin1());
     else if(ui->radioButton_UTF8_send->isChecked())
-        m_socket->write(ui->data_textEdit_send->toPlainText().toUtf8());
+        m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toUtf8());
 }

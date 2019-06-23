@@ -135,6 +135,32 @@
           </widget>
          </item>
          <item>
+          <widget class="QRadioButton" name="radioButton_latin1_receive">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Latin1</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="radioButton_UTF8_receive">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>UTF-8</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QRadioButton" name="radioButton_hex_receive">
            <property name="enabled">
             <bool>false</bool>

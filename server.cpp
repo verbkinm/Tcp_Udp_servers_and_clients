@@ -86,7 +86,11 @@ void Server::slotReadData()
                                       " send:");
 
     if(ui->radioButton_ascii_receive->isChecked())
-        ui->data_textEdit_receive->append(socket->readAll());
+        ui->data_textEdit_receive->append(QString(socket->readAll()).toLocal8Bit());
+    else if(ui->radioButton_latin1_receive->isChecked())
+        ui->data_textEdit_receive->append(QString(socket->readAll()).toLatin1());
+    else if(ui->radioButton_UTF8_receive->isChecked())
+        ui->data_textEdit_receive->append(QString(socket->readAll()).toUtf8());
     else if(ui->radioButton_hex_receive->isChecked())
         hexDump(socket);
 

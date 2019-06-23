@@ -16,10 +16,16 @@ Server::Server(server_type type, QWidget *parent) :
     if(type == TCP)
         m_pTcpServer = new QTcpServer;
         connect(m_pTcpServer, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
-    }
+
+    connect(ui->client_list, SIGNAL(clicked()), this, SLOT(slotConnectionList()));
+
+//    connectionList = new ConnectionsList;
+}
 
 Server::~Server()
 {
+//    connectionList->close();
+
     delete ui;
 
     for(auto socket : socketList)
@@ -27,6 +33,11 @@ Server::~Server()
     m_pTcpServer->close();
 
     delete m_pTcpServer;
+
+    if(connectionList != nullptr){
+        connectionList->close();
+        delete connectionList;
+    }
 }
 
 void Server::on_actionStatusChange_triggered()
@@ -60,11 +71,12 @@ void Server::slotNewConnection()
     ui->data_textEdit_receive->append("Connected to " + socket->peerAddress().toString() + ":" + QString::number(socket->peerPort()));
 
     socketList.append(socket);
-    updateConnectedList();
+    updateConnectedList();    
 }
 
 void Server::slotSocketDisconnect()
 {
+
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(sender());
     ui->count_client->setValue(ui->count_client->value() - 1);
     ui->data_textEdit_receive->append("Host " + socket->peerAddress().toString() + QString::number(socket->peerPort())
@@ -98,6 +110,25 @@ void Server::slotReadData()
     sb->setValue(sb->maximum());
 }
 
+void Server::slotConnectionList()
+{
+    connectionList = new ConnectionsList;
+
+    connectionList->reconstruction(socketList);
+    emit signalConnectionList(connectionList);
+
+    ui->client_list->setDisabled(true);
+
+    connect(connectionList, SIGNAL(signalClose()), this, SLOT(slotConnectionListClose()));
+}
+
+void Server::slotConnectionListClose()
+{
+    ui->client_list->setEnabled(true);
+    delete connectionList;
+    connectionList = nullptr;
+}
+
 void Server::hexDump(QTcpSocket *socket)
 {
     QByteArray answer = socket->readAll().toHex();
@@ -115,14 +146,16 @@ void Server::hexDump(QTcpSocket *socket)
 
 void Server::on_actionSendData_triggered()
 {
-    QTcpSocket* socket = socketList.at(ui->comboBox_clients->currentIndex());
+    if(ui->comboBox_clients->count()){
+        QTcpSocket* socket = socketList.at(ui->comboBox_clients->currentIndex());
 
-    if(ui->radioButton_ascii_send->isChecked())
-        socket->write(ui->data_textEdit_send->toPlainText().toLocal8Bit());
-    else if(ui->radioButton_latin1_send->isChecked())
-        socket->write(ui->data_textEdit_send->toPlainText().toLatin1());
-    else if(ui->radioButton_UTF8_send->isChecked())
-        socket->write(ui->data_textEdit_send->toPlainText().toUtf8());
+        if(ui->radioButton_ascii_send->isChecked())
+            socket->write(ui->data_textEdit_send->toPlainText().toLocal8Bit());
+        else if(ui->radioButton_latin1_send->isChecked())
+            socket->write(ui->data_textEdit_send->toPlainText().toLatin1());
+        else if(ui->radioButton_UTF8_send->isChecked())
+            socket->write(ui->data_textEdit_send->toPlainText().toUtf8());
+    }
 }
 
 void Server::updateConnectedList()
@@ -130,4 +163,7 @@ void Server::updateConnectedList()
     ui->comboBox_clients->clear();
     for(auto socket : socketList)
         ui->comboBox_clients->addItem(socket->peerAddress().toString() + ":" + QString::number(socket->peerPort()));
+
+    if(connectionList != nullptr)
+        connectionList->reconstruction(socketList);
 }

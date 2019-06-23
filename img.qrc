@@ -10,5 +10,6 @@
         <file alias="exit">img/exit.png</file>
         <file alias="server">img/PC.png</file>
         <file alias="client">img/client.png</file>
+        <file alias="close">img/close.png</file>
     </qresource>
 </RCC>

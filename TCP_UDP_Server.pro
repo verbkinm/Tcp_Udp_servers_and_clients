@@ -26,12 +26,16 @@ CONFIG += c++11
 
 SOURCES += \
         client.cpp \
+        connectionslist.cpp \
+        itemconnection.cpp \
         main.cpp \
         mainwindow.cpp \
         server.cpp
 
 HEADERS += \
         client.h \
+        connectionslist.h \
+        itemconnection.h \
         mainwindow.h \
         server.h
 

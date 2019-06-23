@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include "connectionslist.h"
 
 //#include <QUdp
 
@@ -22,7 +23,6 @@ public:
     explicit Server(server_type type, QWidget *parent = nullptr);
     ~Server();
 
-    QTcpServer*     m_pTcpServer    =   nullptr;
 //    QTcpServer*     m_pTcpServer    =   nullptr;
 
 private slots:
@@ -31,11 +31,19 @@ private slots:
     void    slotNewConnection();
     void    slotSocketDisconnect();
     void    slotReadData();
+    void    slotConnectionList();
+    void    slotConnectionListClose();
 
-    void on_actionSendData_triggered();
+    void    on_actionSendData_triggered();
+
+signals:
+    void    signalConnectionList(ConnectionsList*);
 
 private:
     Ui::Server *ui;
+
+    QTcpServer*     m_pTcpServer    =   nullptr;
+    ConnectionsList* connectionList =   nullptr;
 
     QList<QTcpSocket*> socketList;
 

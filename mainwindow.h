@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "connectionslist.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -25,6 +27,8 @@ private slots:
     void on_actionTile_triggered();
 
     void on_actionCascade_triggered();
+
+    void slotConnectionList(ConnectionsList* connectionList);
 
 private:
     Ui::MainWindow *ui;

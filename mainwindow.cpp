@@ -4,6 +4,8 @@
 #include "server.h"
 #include "client.h"
 
+#define VERSION "0.1.1"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -11,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+    setWindowTitle("Tcp_Udp Servers and Clients " + QString(VERSION));
 }
 
 MainWindow::~MainWindow()

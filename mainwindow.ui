@@ -16,6 +16,10 @@
   <property name="windowTitle">
    <string>Tcp_Udp Servers and Clients</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="img.qrc">
+    <normaloff>:/server</normaloff>:/server</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
@@ -29,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>645</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -40,12 +44,20 @@
      <property name="title">
       <string>Новый сервер</string>
      </property>
+     <property name="icon">
+      <iconset resource="img.qrc">
+       <normaloff>:/server</normaloff>:/server</iconset>
+     </property>
      <addaction name="actionTcp_server"/>
      <addaction name="actionUdp_server"/>
     </widget>
     <widget class="QMenu" name="menu_2">
      <property name="title">
       <string>Новый клиент</string>
+     </property>
+     <property name="icon">
+      <iconset resource="img.qrc">
+       <normaloff>:/client</normaloff>:/client</iconset>
      </property>
      <addaction name="actionTcp_client"/>
      <addaction name="actionUdp_client"/>
@@ -73,16 +85,31 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
+   <addaction name="actionTcp_server"/>
+   <addaction name="actionUdp_server"/>
+   <addaction name="separator"/>
+   <addaction name="actionTcp_client"/>
+   <addaction name="actionUdp_client"/>
+   <addaction name="separator"/>
+   <addaction name="action"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/exit</normaloff>:/exit</iconset>
+   </property>
    <property name="text">
     <string>Выход</string>
    </property>
   </action>
   <action name="actionTcp_server">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/tcp-s</normaloff>:/tcp-s</iconset>
+   </property>
    <property name="text">
     <string>Tcp</string>
    </property>
@@ -91,11 +118,19 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/udp-s</normaloff>:/udp-s</iconset>
+   </property>
    <property name="text">
     <string>Udp</string>
    </property>
   </action>
   <action name="actionTcp_client">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/tcp-c</normaloff>:/tcp-c</iconset>
+   </property>
    <property name="text">
     <string>Tcp</string>
    </property>
@@ -103,6 +138,10 @@
   <action name="actionUdp_client">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/udp-c</normaloff>:/udp-c</iconset>
    </property>
    <property name="text">
     <string>Udp</string>
@@ -120,6 +159,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="img.qrc"/>
+ </resources>
  <connections/>
 </ui>

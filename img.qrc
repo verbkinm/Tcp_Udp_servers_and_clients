@@ -3,5 +3,12 @@
         <file alias="play">img/play.png</file>
         <file alias="stop">img/stop.png</file>
         <file alias="list">img/list.png</file>
+        <file alias="tcp-s">img/tcp-s.png</file>
+        <file alias="udp-s">img/upd-s.png</file>
+        <file alias="tcp-c">img/tcp-c.png</file>
+        <file alias="udp-c">img/upd-c.png</file>
+        <file alias="exit">img/exit.png</file>
+        <file alias="server">img/PC.png</file>
+        <file alias="client">img/client.png</file>
     </qresource>
 </RCC>

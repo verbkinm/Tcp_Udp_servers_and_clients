@@ -1,6 +1,7 @@
 #include "server.h"
 #include "ui_server.h"
 
+#include <QNetworkInterface>
 #include <QHostAddress>
 #include <QScrollBar>
 
@@ -13,9 +14,15 @@ Server::Server(server_type type, QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
 
+    QNetworkInterface ifaces;
+    for(auto i : ifaces.allAddresses())
+        ui->listenAddr->addItem(i.toString());
+
     if(type == TCP)
+    {
         m_pTcpServer = new QTcpServer;
         connect(m_pTcpServer, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+    }
 
     connect(ui->client_list, SIGNAL(clicked()), this, SLOT(slotConnectionList()));
 
@@ -43,9 +50,9 @@ Server::~Server()
 void Server::on_actionStatusChange_triggered()
 {
     if(!m_pTcpServer->isListening()){
-        if(m_pTcpServer->listen(QHostAddress(ui->ip_label->text()), quint16(ui->port->value()))){
-            ui->port->setValue(m_pTcpServer->serverPort());
-            ui->ipaddr_line_edit->setText(m_pTcpServer->serverAddress().toString());
+        if(m_pTcpServer->listen(QHostAddress(ui->listenAddr->currentText()), quint16(ui->listenPort->value()))){
+            ui->listenPort->setValue(m_pTcpServer->serverPort());
+            ui->listenAddr->setDisabled(true);
             ui->status_line_edit->setText("starting");
             ui->status_Change->setIcon(QIcon(":/stop"));
         }
@@ -58,6 +65,7 @@ void Server::on_actionStatusChange_triggered()
         ui->status_line_edit->setText("stoped");
         ui->count_client->setValue(0);
         ui->status_Change->setIcon(QIcon(":/play"));
+        ui->listenAddr->setDisabled(false);
     }
 }
 
@@ -97,14 +105,14 @@ void Server::slotReadData()
                                       QString::number(socket->peerPort()) +
                                       " send:");
 
-    if(ui->radioButton_ascii_receive->isChecked())
+    if(ui->encodingRX->currentIndex() == 0)
         ui->data_textEdit_receive->append(QString(socket->readAll()).toLocal8Bit());
-    else if(ui->radioButton_latin1_receive->isChecked())
+    else if(ui->encodingRX->currentIndex() == 1)
         ui->data_textEdit_receive->append(QString(socket->readAll()).toLatin1());
-    else if(ui->radioButton_UTF8_receive->isChecked())
+    else if(ui->encodingRX->currentIndex() == 2)
         ui->data_textEdit_receive->append(QString(socket->readAll()).toUtf8());
-    else if(ui->radioButton_hex_receive->isChecked())
-        hexDump(socket);
+//    else if(ui->encodingRX->currentIndex() == 3)
+//        hexDump(m_socket);
 
     QScrollBar *sb = ui->data_textEdit_receive->verticalScrollBar();
     sb->setValue(sb->maximum());
@@ -149,12 +157,18 @@ void Server::on_actionSendData_triggered()
     if(ui->comboBox_clients->count()){
         QTcpSocket* socket = socketList.at(ui->comboBox_clients->currentIndex());
 
-        if(ui->radioButton_ascii_send->isChecked())
-            socket->write(ui->data_textEdit_send->toPlainText().toLocal8Bit());
-        else if(ui->radioButton_latin1_send->isChecked())
-            socket->write(ui->data_textEdit_send->toPlainText().toLatin1());
-        else if(ui->radioButton_UTF8_send->isChecked())
-            socket->write(ui->data_textEdit_send->toPlainText().toUtf8());
+        QString endl = "";
+        if(ui->endLine->currentIndex() == 0)
+            endl = "\r\n";
+        else if(ui->endLine->currentIndex() == 1)
+            endl = "\n";
+
+        if(ui->encodingTX->currentIndex() == 0)
+            socket->write((ui->data_textEdit_send->toPlainText() + endl).toLocal8Bit());
+        else if(ui->encodingTX->currentIndex() == 1)
+            socket->write((ui->data_textEdit_send->toPlainText() + endl).toLatin1());
+        else if(ui->encodingTX->currentIndex() == 2   )
+            socket->write((ui->data_textEdit_send->toPlainText() + endl).toUtf8());
     }
 }
 

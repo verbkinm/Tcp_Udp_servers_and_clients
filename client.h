@@ -35,9 +35,12 @@ private slots:
     void    slotSocketDisconnect();
 
     void    slotReadData();
+    void    slotError(QAbstractSocket::SocketError error);
 
     void on_actionStatusChange_triggered();
     void on_actionSendData_triggered();
+
+
 };
 
 #endif // CLIENT_H

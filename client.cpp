@@ -1,6 +1,7 @@
 #include "client.h"
 #include "ui_client.h"
 #include <QDebug>
+#include <QMessageBox>
 
 #include <QScrollBar>
 
@@ -16,6 +17,8 @@ Client::Client(client_type type, QWidget *parent) :
         m_socket = new QTcpSocket;
 
     connect(m_socket, SIGNAL(connected()), this, SLOT(slotNewConnection()));
+    connect(m_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(slotError(QAbstractSocket::SocketError)));
+
 }
 
 Client::~Client()
@@ -69,17 +72,84 @@ void Client::slotReadData()
                                       QString::number(m_socket->peerPort()) +
                                       " send:");
 
-    if(ui->radioButton_ascii_receive->isChecked())
+    if(ui->encodingRX->currentIndex() == 0)
         ui->data_textEdit_receive->append(QString(m_socket->readAll()).toLocal8Bit());
-    else if(ui->radioButton_latin1_receive->isChecked())
+    else if(ui->encodingRX->currentIndex() == 1)
         ui->data_textEdit_receive->append(QString(m_socket->readAll()).toLatin1());
-    else if(ui->radioButton_UTF8_receive->isChecked())
+    else if(ui->encodingRX->currentIndex() == 2)
         ui->data_textEdit_receive->append(QString(m_socket->readAll()).toUtf8());
-    else if(ui->radioButton_hex_receive->isChecked())
-        hexDump(m_socket);
+//    else if(ui->encodingRX->currentIndex() == 3)
+//        hexDump(m_socket);
 
     QScrollBar *sb = ui->data_textEdit_receive->verticalScrollBar();
     sb->setValue(sb->maximum());
+}
+
+void Client::slotError(QAbstractSocket::SocketError error)
+{
+    QMessageBox msg(QMessageBox::Critical, "Error number", QString::number(error));
+    msg.exec();
+    qDebug() << error;
+    QString strErr;
+    switch (error) {
+        case QAbstractSocket::ConnectionRefusedError:
+            strErr = "The connection was refused by the peer (or timed out).";
+            break;
+        case QAbstractSocket::RemoteHostClosedError:
+            strErr = "The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+            break;
+        case QAbstractSocket::HostNotFoundError:
+            break;
+        case QAbstractSocket::SocketAccessError:
+            break;
+        case QAbstractSocket::SocketResourceError:
+            break;
+        case QAbstractSocket::SocketTimeoutError:
+            break;
+        case QAbstractSocket::DatagramTooLargeError:
+            break;
+        case QAbstractSocket::NetworkError:
+            break;
+        case QAbstractSocket::AddressInUseError:
+            break;
+        case QAbstractSocket::SocketAddressNotAvailableError:
+            break;
+        case QAbstractSocket::UnsupportedSocketOperationError:
+            break;
+        case QAbstractSocket::ProxyAuthenticationRequiredError:
+            break;
+        case QAbstractSocket::SslHandshakeFailedError:
+            break;
+        case QAbstractSocket::UnfinishedSocketOperationError:
+            break;
+        case QAbstractSocket::ProxyConnectionRefusedError:
+            break;
+        case QAbstractSocket::ProxyConnectionClosedError:
+            break;
+        case QAbstractSocket::ProxyConnectionTimeoutError:
+            break;
+        case QAbstractSocket::ProxyNotFoundError:
+            break;
+        case QAbstractSocket::ProxyProtocolError:
+            break;
+        case QAbstractSocket::OperationError:
+            break;
+        case QAbstractSocket::SslInternalError:
+            break;
+        case QAbstractSocket::SslInvalidUserDataError:
+            break;
+        case QAbstractSocket::TemporaryError:
+            break;
+        case QAbstractSocket::UnknownSocketError:
+            strErr = "UnknownSocketError";
+            break;
+    }
+    QTextCharFormat fmt;
+    fmt.setForeground(QColor(255, 0, 0));
+    ui->data_textEdit_receive->mergeCurrentCharFormat(fmt);
+    ui->data_textEdit_receive->append(strErr);
+    fmt.setForeground(QColor(0, 0, 0));
+    ui->data_textEdit_receive->mergeCurrentCharFormat(fmt);
 }
 
 void Client::on_actionStatusChange_triggered()
@@ -96,15 +166,15 @@ void Client::on_actionStatusChange_triggered()
 void Client::on_actionSendData_triggered()
 {
     QString endl = "";
-    if(ui->radioButton_rn->isChecked())
+    if(ui->endLine->currentIndex() == 0)
         endl = "\r\n";
-    else if(ui->radioButton_n->isChecked())
-        endl = "n";
+    else if(ui->endLine->currentIndex() == 1)
+        endl = "\n";
 
-    if(ui->radioButton_ascii_send->isChecked())
+    if(ui->encodingTX->currentIndex() == 0)
         m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toLocal8Bit());
-    else if(ui->radioButton_latin1_send->isChecked())
+    else if(ui->encodingTX->currentIndex() == 1)
         m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toLatin1());
-    else if(ui->radioButton_UTF8_send->isChecked())
+    else if(ui->encodingTX->currentIndex() == 2   )
         m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toUtf8());
 }

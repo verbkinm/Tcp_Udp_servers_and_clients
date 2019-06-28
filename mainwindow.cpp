@@ -5,7 +5,7 @@
 #include "server.h"
 #include "client.h"
 
-#define VERSION "0.1.2"
+#define VERSION "0.1.3"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

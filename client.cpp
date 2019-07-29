@@ -13,7 +13,7 @@ Client::Client(client_type type, QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
 
-    if(type == TCP)
+    if(type == client_type::TCP)
         m_socket = new QTcpSocket;
 
     connect(m_socket, SIGNAL(connected()), this, SLOT(slotNewConnection()));

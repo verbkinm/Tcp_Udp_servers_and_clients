@@ -30,6 +30,8 @@ private slots:
 
     void slotConnectionList(ConnectionsList* connectionList);
 
+    void on_actionUdp_server_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

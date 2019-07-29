@@ -138,6 +138,9 @@
       </item>
       <item>
        <widget class="QTextEdit" name="data_textEdit_receive">
+        <property name="styleSheet">
+         <string notr="true">font: 75 10pt &quot;Miriam Mono CLM&quot;;</string>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -235,6 +238,9 @@
       </item>
       <item>
        <widget class="QTextEdit" name="data_textEdit_send">
+        <property name="styleSheet">
+         <string notr="true">font: 75 10pt &quot;Miriam Mono CLM&quot;;</string>
+        </property>
         <property name="readOnly">
          <bool>false</bool>
         </property>
@@ -295,6 +301,20 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>ipaddr_line_edit</tabstop>
+  <tabstop>port</tabstop>
+  <tabstop>status_line_edit</tabstop>
+  <tabstop>status_Change</tabstop>
+  <tabstop>encodingRX</tabstop>
+  <tabstop>data_textEdit_receive</tabstop>
+  <tabstop>clear_receive</tabstop>
+  <tabstop>endLine</tabstop>
+  <tabstop>encodingTX</tabstop>
+  <tabstop>data_textEdit_send</tabstop>
+  <tabstop>clear_send</tabstop>
+  <tabstop>send</tabstop>
+ </tabstops>
  <resources>
   <include location="img.qrc"/>
  </resources>
@@ -306,8 +326,8 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>473</x>
-     <y>20</y>
+     <x>398</x>
+     <y>29</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -322,8 +342,8 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>76</x>
-     <y>228</y>
+     <x>95</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel">
      <x>119</x>
@@ -338,12 +358,12 @@
    <slot>clear()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>150</x>
-     <y>441</y>
+     <x>175</x>
+     <y>404</y>
     </hint>
     <hint type="destinationlabel">
-     <x>168</x>
-     <y>406</y>
+     <x>187</x>
+     <y>374</y>
     </hint>
    </hints>
   </connection>
@@ -354,8 +374,8 @@
    <slot>trigger()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>345</x>
-     <y>444</y>
+     <x>337</x>
+     <y>404</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>

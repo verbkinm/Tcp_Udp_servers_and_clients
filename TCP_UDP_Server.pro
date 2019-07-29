@@ -27,6 +27,7 @@ CONFIG += c++11
 SOURCES += \
         client.cpp \
         connectionslist.cpp \
+        hex_dump.c \
         itemconnection.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -35,6 +36,7 @@ SOURCES += \
 HEADERS += \
         client.h \
         connectionslist.h \
+        hex_dump.h \
         itemconnection.h \
         mainwindow.h \
         server.h

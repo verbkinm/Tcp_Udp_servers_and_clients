@@ -5,7 +5,7 @@
 #include "server.h"
 #include "client.h"
 
-#define VERSION "0.1.3"
+#define VERSION "0.2.0"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,7 +31,7 @@ void MainWindow::on_action_triggered()
 
 void MainWindow::on_actionTcp_server_triggered()
 {
-    Server* server = new Server(Server::TCP);
+    Server* server = new Server(Server::server_type::TCP);
     ui->mdiArea->addSubWindow(server);
     server->show();
 
@@ -41,7 +41,7 @@ void MainWindow::on_actionTcp_server_triggered()
 
 void MainWindow::on_actionTcp_client_triggered()
 {
-    Client* client = new Client(Client::TCP);
+    Client* client = new Client(Client::client_type::TCP);
     ui->mdiArea->addSubWindow(client);
     client->show();
 }
@@ -60,4 +60,11 @@ void MainWindow::slotConnectionList(ConnectionsList *connectionList)
 {
     ui->mdiArea->addSubWindow(connectionList);
     connectionList->show();
+}
+
+void MainWindow::on_actionUdp_server_triggered()
+{
+    Server* server = new Server(Server::server_type::UDP);
+    ui->mdiArea->addSubWindow(server);
+    server->show();
 }

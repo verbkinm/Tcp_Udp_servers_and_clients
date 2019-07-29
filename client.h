@@ -15,13 +15,11 @@ class Client : public QWidget
     Q_OBJECT
 
 public:
-    enum client_type {TCP, UDP};
+    enum class client_type {TCP, UDP};
     explicit Client(client_type type, QWidget *parent = nullptr);
     ~Client();
 
     QAbstractSocket* m_socket = nullptr;
-//    QTcpSocket* m_pTcpSocket  = nullptr;
-//    QUdpSocket* m_pUdpSocket  = nullptr;
 
 private:
     Ui::Client *ui;

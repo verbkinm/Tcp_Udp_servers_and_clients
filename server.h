@@ -6,7 +6,6 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
-#include "hex_dump.h"
 #include "connectionslist.h"
 
 //#include <QUdp

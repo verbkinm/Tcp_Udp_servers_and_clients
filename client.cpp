@@ -4,7 +4,7 @@
 #include <QMessageBox>
 
 #include <QScrollBar>
-
+#include "hex_dump.h"
 
 Client::Client(client_type type, QWidget *parent) :
     QWidget(parent),
@@ -29,19 +29,36 @@ Client::~Client()
     delete ui;
 }
 
-void Client::hexDump(QAbstractSocket *socket)
+void Client::hexDump(QByteArray array)
 {
-    QByteArray answer = socket->readAll().toHex();
-//    for(int i = 0; i < answer.length(); i++){
-//        ui->data_textEdit->insertPlainText(QString(answer.at(i)));
-//        if(i % 2 == 0)
-//            ui->data_textEdit->insertPlainText(" ");
-//        if(i % 16 == 0)
-//            ui->data_textEdit->insertPlainText(" ");
-//        if(i % 32 == 0)
-//            ui->data_textEdit->insertPlainText("\n");
-//    }
-    ui->data_textEdit_receive->append(answer.toHex());
+    size_t size = size_t(array.length());
+    byte *byteArray = new byte[size];
+    FILE* output = nullptr;
+    char  fileName[] = "tmp";
+
+    output = fopen(fileName, "w+");
+    if(output == nullptr)
+    {
+        fprintf(stderr, "Cannot create temporary file\n %s - %s() - %d line", __FILE__, __FUNCTION__, __LINE__);
+        return;
+    }
+
+    for (int i = 0; i < int(size); ++i)
+        byteArray[i] = byte(array[i]);
+
+    hex_Dump(byteArray, &size, output);
+
+    QByteArray arrayToTextEdit;
+    char ch;
+    while ( (ch = char(fgetc(output))) != EOF)
+        arrayToTextEdit.append(ch);
+
+    fclose(output);
+    remove(fileName);
+
+    ui->data_textEdit_receive->append(arrayToTextEdit + "\n");
+
+    delete[] byteArray;
 }
 
 void Client::slotNewConnection()
@@ -78,8 +95,8 @@ void Client::slotReadData()
         ui->data_textEdit_receive->append(QString(m_socket->readAll()).toLatin1());
     else if(ui->encodingRX->currentIndex() == 2)
         ui->data_textEdit_receive->append(QString(m_socket->readAll()).toUtf8());
-//    else if(ui->encodingRX->currentIndex() == 3)
-//        hexDump(m_socket);
+    else if(ui->encodingRX->currentIndex() == 3)
+        hexDump(m_socket->readAll());
 
     QScrollBar *sb = ui->data_textEdit_receive->verticalScrollBar();
     sb->setValue(sb->maximum());
@@ -92,57 +109,57 @@ void Client::slotError(QAbstractSocket::SocketError error)
     qDebug() << error;
     QString strErr;
     switch (error) {
-        case QAbstractSocket::ConnectionRefusedError:
-            strErr = "The connection was refused by the peer (or timed out).";
-            break;
-        case QAbstractSocket::RemoteHostClosedError:
-            strErr = "The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
-            break;
-        case QAbstractSocket::HostNotFoundError:
-            break;
-        case QAbstractSocket::SocketAccessError:
-            break;
-        case QAbstractSocket::SocketResourceError:
-            break;
-        case QAbstractSocket::SocketTimeoutError:
-            break;
-        case QAbstractSocket::DatagramTooLargeError:
-            break;
-        case QAbstractSocket::NetworkError:
-            break;
-        case QAbstractSocket::AddressInUseError:
-            break;
-        case QAbstractSocket::SocketAddressNotAvailableError:
-            break;
-        case QAbstractSocket::UnsupportedSocketOperationError:
-            break;
-        case QAbstractSocket::ProxyAuthenticationRequiredError:
-            break;
-        case QAbstractSocket::SslHandshakeFailedError:
-            break;
-        case QAbstractSocket::UnfinishedSocketOperationError:
-            break;
-        case QAbstractSocket::ProxyConnectionRefusedError:
-            break;
-        case QAbstractSocket::ProxyConnectionClosedError:
-            break;
-        case QAbstractSocket::ProxyConnectionTimeoutError:
-            break;
-        case QAbstractSocket::ProxyNotFoundError:
-            break;
-        case QAbstractSocket::ProxyProtocolError:
-            break;
-        case QAbstractSocket::OperationError:
-            break;
-        case QAbstractSocket::SslInternalError:
-            break;
-        case QAbstractSocket::SslInvalidUserDataError:
-            break;
-        case QAbstractSocket::TemporaryError:
-            break;
-        case QAbstractSocket::UnknownSocketError:
-            strErr = "UnknownSocketError";
-            break;
+    case QAbstractSocket::ConnectionRefusedError:
+        strErr = "The connection was refused by the peer (or timed out).";
+        break;
+    case QAbstractSocket::RemoteHostClosedError:
+        strErr = "The remote host closed the connection. Note that the client socket (i.e., this socket) will be closed after the remote close notification has been sent.";
+        break;
+    case QAbstractSocket::HostNotFoundError:
+        break;
+    case QAbstractSocket::SocketAccessError:
+        break;
+    case QAbstractSocket::SocketResourceError:
+        break;
+    case QAbstractSocket::SocketTimeoutError:
+        break;
+    case QAbstractSocket::DatagramTooLargeError:
+        break;
+    case QAbstractSocket::NetworkError:
+        break;
+    case QAbstractSocket::AddressInUseError:
+        break;
+    case QAbstractSocket::SocketAddressNotAvailableError:
+        break;
+    case QAbstractSocket::UnsupportedSocketOperationError:
+        break;
+    case QAbstractSocket::ProxyAuthenticationRequiredError:
+        break;
+    case QAbstractSocket::SslHandshakeFailedError:
+        break;
+    case QAbstractSocket::UnfinishedSocketOperationError:
+        break;
+    case QAbstractSocket::ProxyConnectionRefusedError:
+        break;
+    case QAbstractSocket::ProxyConnectionClosedError:
+        break;
+    case QAbstractSocket::ProxyConnectionTimeoutError:
+        break;
+    case QAbstractSocket::ProxyNotFoundError:
+        break;
+    case QAbstractSocket::ProxyProtocolError:
+        break;
+    case QAbstractSocket::OperationError:
+        break;
+    case QAbstractSocket::SslInternalError:
+        break;
+    case QAbstractSocket::SslInvalidUserDataError:
+        break;
+    case QAbstractSocket::TemporaryError:
+        break;
+    case QAbstractSocket::UnknownSocketError:
+        strErr = "UnknownSocketError";
+        break;
     }
     QTextCharFormat fmt;
     fmt.setForeground(QColor(255, 0, 0));
@@ -177,4 +194,17 @@ void Client::on_actionSendData_triggered()
         m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toLatin1());
     else if(ui->encodingTX->currentIndex() == 2   )
         m_socket->write((ui->data_textEdit_send->toPlainText() + endl).toUtf8());
+    else if(ui->encodingTX->currentIndex() == 3   )
+    {
+        std::string str = ui->data_textEdit_send->toPlainText().toStdString();
+        std::stringstream stream(str);
+
+        int value;
+        while(stream >> value)
+        {
+            QByteArray data;
+            data.push_back(value);
+            m_socket->write(data);
+        }
+    }
 }

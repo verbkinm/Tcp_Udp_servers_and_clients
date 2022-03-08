@@ -6,6 +6,8 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 
+#include <sstream>
+
 namespace Ui {
 class Client;
 }
@@ -26,7 +28,7 @@ private:
 
 //    int m_socketType;
 
-    void    hexDump(QAbstractSocket* socket);
+    void    hexDump(QByteArray array);
 
 private slots:
     void    slotNewConnection();

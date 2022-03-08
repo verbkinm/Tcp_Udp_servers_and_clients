@@ -7,7 +7,7 @@
 
 #include "server.h"
 #include "ui_server.h"
-#include "hex_dump.h"
+//#include "hex_dump.h"
 
 #define START_SERVER  ui->status_line_edit->setText("starting"); ui->status_Change->setIcon(QIcon(":/stop")); ui->listenAddr->setDisabled(true);
 #define STOP_SERVER   ui->status_line_edit->setText("stoped"); ui->status_Change->setIcon(QIcon(":/play")); ui->listenAddr->setDisabled(false);
@@ -199,34 +199,34 @@ void Server::slotConnectionListClose()
 
 void Server::hexDump(QByteArray array) const
 {
-    size_t size = size_t(array.length());
-    byte *byteArray = new byte[size];
-    FILE* output = nullptr;
-    char  fileName[] = "tmp";
+//    size_t size = size_t(array.length());
+//    byte *byteArray = new byte[size];
+//    FILE* output = nullptr;
+//    char  fileName[] = "tmp";
 
-    output = fopen(fileName, "w+");
-    if(output == nullptr)
-    {
-        fprintf(stderr, "Cannot create temporary file\n %s - %s() - %d line", __FILE__, __FUNCTION__, __LINE__);
-        return;
-    }
+//    output = fopen(fileName, "w+");
+//    if(output == nullptr)
+//    {
+//        fprintf(stderr, "Cannot create temporary file\n %s - %s() - %d line", __FILE__, __FUNCTION__, __LINE__);
+//        return;
+//    }
 
-    for (int i = 0; i < int(size); ++i)
-        byteArray[i] = byte(array[i]);
+//    for (int i = 0; i < int(size); ++i)
+//        byteArray[i] = byte(array[i]);
 
-    hex_Dump(byteArray, &size, output);
+//    hex_Dump(byteArray, &size, output);
 
-    QByteArray arrayToTextEdit;
-    char ch;
-    while ( (ch = char(fgetc(output))) != EOF)
-        arrayToTextEdit.append(ch);
+//    QByteArray arrayToTextEdit;
+//    char ch;
+//    while ( (ch = char(fgetc(output))) != EOF)
+//        arrayToTextEdit.append(ch);
 
-    fclose(output);
-    remove(fileName);
+//    fclose(output);
+//    remove(fileName);
 
-    ui->data_textEdit_receive->append(arrayToTextEdit + "\n");
+//    ui->data_textEdit_receive->append(arrayToTextEdit + "\n");
 
-    delete[] byteArray;
+//    delete[] byteArray;
 }
 
 void Server::on_actionSendData_triggered()
